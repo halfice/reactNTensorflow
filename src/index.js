@@ -2,9 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+//import TFAPP from './TFAPP';
+import SimpleLRTF from './SimpleLRTF';
+import Diabitic from './Diabitic';
+
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+//ReactDOM.render(<App />, document.getElementById('root'));
+//ReactDOM.render(<TFAPP />, document.getElementById('root'));
+//ReactDOM.render(<SimpleLRTF />, document.getElementById('root'));
+ReactDOM.render(<Diabitic />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
