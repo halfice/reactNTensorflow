@@ -1,6 +1,42 @@
 .App {
   text-align: center;
 }
+.newdor{
+  width: 100%;
+  float: left;
+}
+.divsfloatnone{
+  border: solid 2px #282c34;
+    width: 120px;
+    height: 120px;
+    background-color: #80808033;
+    text-align: center;
+    padding: 11px;
+    margin: 3px;
+    float: none;
+}
+
+.divend{
+  background-color: #00800061;
+    color: white;
+    border: solid 2px #282c34;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    padding: 11px;
+    margin: 3px;
+    float: left;
+}
+.divs{
+  border: solid 2px #282c34;
+    width: 120px;
+    height: 120px;
+    background-color: #80808033;
+    text-align: center;
+    padding: 11px;
+    margin: 3px;
+    float: left;
+}
 
 .App-logo {
   height: 40vmin;
