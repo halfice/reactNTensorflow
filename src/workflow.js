@@ -1,13 +1,11 @@
+
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import * as tf from '@tensorflow/tfjs'
-import * as tfvis from '@tensorflow/tfjs-vis';
-import * as Papa from "papaparse";
-import { resolve } from 'dns';
-import { combineLocations } from '@tensorflow/tfjs-core/dist/ops/axis_util';
-window.tf = tf;
-window.tfvis = tfvis;
+import { ArcherContainer, ArcherElement } from 'react-archer';
+const rootStyle = { display: 'flex', justifyContent: 'center' };
+const rowStyle = { margin: '100px 0', display: 'flex', justifyContent: 'space-between', }
+const boxStyle = { padding: '10px', border: '1px solid black', margin:'11px', width:'120px' };
 //Note  In this Poject we have use Two type of Train Model
 //First using TensorFlow to Train model ComponentdidMountold
 //Another method usign split data manually.
@@ -17,64 +15,275 @@ class workflow extends React.Component {
     super(props);
     this.state = {
       MainData: [],
+      PlannedData:[],
+      IsProjectRelateData:[],
       ProcurementMethod:0,
-      isDirectManagerApprovalRequired:"",
-      isDeptManagerApprovalRequired:"",
-      isSectorManagerApprovalRequired:"",
-      PR_MANAGER_APPROVAL:"",
-      FINANCE_MANAGER_APPROVAL:"",
+      
       IsPlannedPurchase:0, //1 yes , 2 no
       IsProjectRelated:"",//1 yes, 2 no,
       WorkflowEnd:"",
       StepAnswer:"",
-      StepAnswerNo:"",
-      PMO_TEAM_REVIEW:"",
-      MainFlow:"PR_INITIATE",
-      TECHEVAL_DETAILS:"",
+      workflowdata:[],
+      ProcMethodName:"",
+
+      
 
     };
-    this.divsclickevent = this.divsclickevent.bind(this);
-    this.clickyes = this.clickyes.bind(this);
-    this.clickno = this.clickno.bind(this);
-    this.setisWorkflowEnd = this.setisWorkflowEnd.bind(this);
+    this.divsclickevent = this.divsclickevent.bind(this);  
+    this.divsclickeventplanned = this.divsclickeventplanned.bind(this);    
+    this.clickrelatedtoproject = this.clickrelatedtoproject.bind(this);    
     
   }
+  getMethodname(id)
+  {
+    var result="";
+
+    switch(id){
+      case 1:
+        result= "Public Tender"
+        break;
+        case 2:
+          result="Limited Tender"
+        break;
+        case 3:
+          result="Practice Tender"
+        break;
+        case 4:
+          result= "Direct order"
+        break;
+        case 5:
+          result="Exceptional Direct order"
+        break;
+        case 6:
+          result= "RFI"
+        break;
+        case 7:
+          result="Amendment Order"
+        break;
+    }
+    return result;
+  }
+  buildarray(){
+var result=0;
+    //11241
+    //planned 1 
+    //7
+    //is realted to project no 2
+    //7 yes no
+    if (this.state.ProcurementMethod==7 && this.state.IsPlannedPurchase=="1" 
+    && this.state.IsProjectRelated==2)
+    {
+      result=1;
+      var Arrays01="PR_INITIATE,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,RFC_FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,FINANCE_ACTUAL_VALUE_APPROVAL,FINANCE_ACTUAL_VALUE_APPROVAL,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(Arrays01,7);
+    }
+
+   
+    //11830 , not planned , method 4 , is related to proec tno
+    
+    if (this.state.ProcurementMethod==4 && this.state.IsPlannedPurchase=="2" 
+    && this.state.IsProjectRelated==2)
+    { result=1;
+      var Array02 ="PR_INITIATE,REQUESTER_FINAL_REVIEW,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING,USER_RATING";
+      this.buildhtml(Array02,4);
+
+    }
+
+
+
+
+    //11289
+    //pl yes metho 3, is projected related - no
+   
+    if (this.state.ProcurementMethod==3 && this.state.IsPlannedPurchase=="1" 
+    && this.state.IsProjectRelated==2)
+    { result=1;
+var array03="PR_INITIATE,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_TENDERING,PR_TEAM_Tech_Eval,PR_TEAM_Commercial_Eval,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING,USER_RATING";
+      this.buildhtml(array03,3);
+    }
+    
+    //11660
+    // pl no, moethod 5, projected related no
+        if (this.state.ProcurementMethod==5 && this.state.IsPlannedPurchase=="2" 
+    && this.state.IsProjectRelated==2)
+    { result=1;
+      var array04="PR_INITIATE,REQUESTER_FINAL_REVIEW,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array04,5);
+    }
+
+    //pl yes, method =4, pr=no
+      if (this.state.ProcurementMethod==4 && this.state.IsPlannedPurchase=="1" 
+    && this.state.IsProjectRelated==1)
+   { result=1;
+    var array05="PR_INITIATE,DirectManagerApproval,RFC_DirectManagerApproval,DirectManagerApproval,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,TECHEVAL_DETAILS,DirectManagerApproval_Execution,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array05,4);
+    }
+    
+    //11699
+    //pl no , method 7, pr no
+    if (this.state.ProcurementMethod==7 && this.state.IsPlannedPurchase=="2" 
+    && this.state.IsProjectRelated==2)
+   { result=1;
+    var array06="PR_INITIATE,REQUESTER_FINAL_REVIEW,DirectManagerApproval_Execution,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array06,7);
+    }
+    
+    
+    //11335
+    //pl yes, method 5 pr no
+    
+    if (this.state.ProcurementMethod==7 && this.state.IsPlannedPurchase=="1" 
+    && this.state.IsProjectRelated==2)
+   { result=1;
+    var array07="PR_INITIATE,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,RFC_PR_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,REQUESTER_FINAL_REVIEW,DirectManagerApproval_Execution,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array07,7);
+    }
+    
+    //11427
+    //pl no, m 6 pr no
+    if (this.state.ProcurementMethod==6 && this.state.IsPlannedPurchase=="2" 
+    && this.state.IsProjectRelated==2)
+   { result=1;
+    var array08="PR_INITIATE,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array08,6);
+    }
+    
+    //11452
+    //pl no, m 3
+    
+    
+    if (this.state.ProcurementMethod==3 && this.state.IsPlannedPurchase=="2" 
+    && this.state.IsProjectRelated==2)
+   { result=1;
+    var array09 ="PR_INITIATE,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_TENDERING,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,RFC_PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_TENDERING,PR_TEAM_Tech_Eval,PR_TEAM_Commercial_Eval,PR_TEAM_ACTUAL_VALUE,FINANCE_ACTUAL_VALUE_APPROVAL,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
+      this.buildhtml(array09,3);
+    }
+
+if ( result==0)
+{
+  alert ("Not found");
+}
   
+
+   
+
+
+
+  }
+
+  buildhtml(ArrayList,methodid){
+    var MethodName=this.getMethodname(methodid);
+    var Arraydimen=ArrayList.split(',');
+    var TempArray=[];
+    for(var x=0;x<Arraydimen.length;x++){
+     var NewData = {
+       Title:Arraydimen[x],
+       Id:x
+     }
+     TempArray.push(NewData)
+    }
+    this.setState({
+      workflowdata:TempArray,
+      ProcMethodName:MethodName
+    },()=>{
+
+    });
+  }
+
+  clickrelatedtoproject(item){
+    //alert(item.target.id)\
+    //1 is yes
+    // 2 is no
+    this.setState({
+      IsProjectRelated:item.target.id
+    },()=>{
+this.buildarray();
+    });
+    
+
+
+  }
+
+  divsclickeventplanned(item){
+//alert(item.target.id)
+//1 is yes
+//2 is no
+this.setState({
+  IsPlannedPurchase:item.target.id
  
+},()=>{
+this.isProjectRelateddivs();
+});
+
+  }
+
+
+isProjectRelateddivs()
+{
+  var TempArray=[];
+ 
+  var NewData = {
+    Title:"Is Related to Project Yes",
+    Id:1
+  }
+  TempArray.push(NewData)
+  var NewData = {
+   Title:"Is Related to Project No",
+   Id:2
+ }
+ TempArray.push(NewData)
+
+ 
+this.setState({
+  IsProjectRelateData: TempArray,
+  
+});
+}
+
+
+  
+  divsclickevent(itemid)
+{
+  var ProcurementMethodId=itemid.target.id;
+  var TempArray=[];
+ 
+   var NewData = {
+     Title:"Is Purchased Plan Yes",
+     Id:1
+   }
+   TempArray.push(NewData)
+   var NewData = {
+    Title:"Is Purchased Plan No",
+    Id:2
+  }
+
+  TempArray.push(NewData)
+this.setState({
+  PlannedData: TempArray,
+ ProcurementMethod:ProcurementMethodId,
+});
+
+}
+
 
  renderinitialdivs(){
-   //11241
-   //planned
-   //7
-   //is realted to project no
-var Arrays01="PR_INITIATE,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,RFC_FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,FINANCE_ACTUAL_VALUE_APPROVAL,FINANCE_ACTUAL_VALUE_APPROVAL,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING;
-
-//11830 , not planned , method 4 , is related to proec tno
-var Array02 ="PR_INITIATE,REQUESTER_FINAL_REVIEW,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING,USER_RATING";
-
-//11289
-//pl yes metho 3, is projected related - no
-var array03="PR_INITIATE,DeptManagerApproval,SectorManagerApproval,FINANCE_MANAGER_APPROVAL,FINANCE_MANAGER_APPROVAL,PR_MANAGER_APPROVAL,TECHEVAL_DETAILS,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_TENDERING,PR_TEAM_Tech_Eval,PR_TEAM_Commercial_Eval,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING,USER_RATING";
-
-
-//11660
-// pl no, moethod 5, projected related no
-var array04="PR_INITIATE,REQUESTER_FINAL_REVIEW,DeptManagerApproval_Execution,SectorManagerApproval_Execution,FINANCE_MANAGER_APPROVAL_Execution,FINANCE_MANAGER_APPROVAL_Execution,PR_MANAGER_APPROVAL_Execution,PR_TEAM_EXECUTION,PR_TEAM_ACTUAL_VALUE,PR_TEAM_CONTRACTING,PR_TEAM_DELIVERY,USER_RATING";
-
-
-
+  
 
    var TempArray=[];
-   for(var x=1;x<7;x++){
+   for(var x=1;x<8;x++){
+     var mthodnametemp=this.getMethodname(x);
     var NewData = {
       Title:"Method"+x,
-      Id:x
+      Id:x,
+      ProcName:mthodnametemp
     }
     TempArray.push(NewData)
 }
+
 this.setState({
   MainData: TempArray,
 });
+
  }
 
   componentDidMount() {
@@ -92,11 +301,66 @@ this.setState({
       return <div className="divs"  key={item["Id"]}  >{item["Title"]}
       <hr>
       </hr>
+      <div>{item["ProcName"]}</div>
+      <hr>
+      </hr>
       <button id={item["Id"]} onClick={this.divsclickevent}>Play</button>
       </div>
     }.bind(this));
 
+
+    var plannedhtml = this.state.PlannedData.map(function (item, i) {
+      return <div className="divs"  key={item["Id"]}  >{item["Title"]}
+      <hr>
+      </hr>
+      <button id={item["Id"]} onClick={this.divsclickeventplanned}>Play</button>
+      </div>
+    }.bind(this));
    
+    
+
+    var proelatedhtml = this.state.IsProjectRelateData.map(function (item, i) {
+      return <div className="divs"  key={item["Id"]}  >{item["Title"]}
+      <hr>
+      </hr>
+      <button id={item["Id"]} onClick={this.clickrelatedtoproject}>Play</button>
+      </div>
+    }.bind(this));
+
+
+    var workflowhtml = this.state.workflowdata.map(function (item, i) {
+      return <div>
+        
+        <div className="divsworkfow"  key={item["Id"]}  > 
+      <div>
+      {item["Title"]}
+      </div>    
+      </div>
+      </div>
+    }.bind(this));
+
+
+
+    var archs=this.state.workflowdata.map((item,i)=>{
+      return (
+        <div className="arrowsdiv">
+<ArcherElement
+      id={i}
+      relations={[{
+        targetId: i+1,
+        targetAnchor: 'right',
+        sourceAnchor: 'left',
+        style: { strokeColor: 'blue', strokeWidth: 1 },
+        label:item["Title"],
+      }]}
+    >
+      <div style={boxStyle}>{item["Title"]}</div>
+    </ArcherElement>
+    <br></br>
+
+        </div>
+        );
+    });
 
 
     return (
@@ -116,13 +380,9 @@ this.setState({
 
 <div className="newdor">
 {
-     this.state.IsPlannedPurchase=="Yes" && 
+     this.state.PlannedData.length>0 && 
      <div>
-      <div className="divs">
-         <h3>Is Purchased is Plan</h3>
-       <button id="btnyes21" onClick={this.clickyes}>Yes</button>
-       <button id="btnno31" onClick={this.clickno}>No</button>
-         </div>
+      {plannedhtml}
        </div>
    }
 
@@ -130,245 +390,61 @@ this.setState({
 </div >
 
 
-        <div className="newdor">
-   {
-     this.state.isDirectManagerApprovalRequired=="Yes" && 
+
+
+
+<div className="newdor">
+{
+     this.state.IsProjectRelateData.length>0 && 
      <div>
-       <div className="divs">
-         <h3>Direct Manger approval Taken</h3>
-       <button id="btnyes" onClick={this.clickyes.bind(this)}>Yes</button>
-       <button id="btnno" onClick={this.clickno.bind(this)}>No</button>
-         </div>
+      {proelatedhtml}
        </div>
    }
+
+
+</div >
+
+
+
+
+
+<div className="newdor">
+{
+     this.state.workflowdata.length>0 && 
+     <div>
+       <h2>Procurement Method : #{this.state.ProcMethodName}</h2>
+       <hr></hr>
+      {workflowhtml}
+
+<hr>
+</hr>
+
+
+
+<div>
+
+<ArcherContainer strokeColor='red' >
+
+
+  <div style={rowStyle}>
+    {archs}
 
    
-   {
-     this.state.isDeptManagerApprovalRequired=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>Department Manger approval Taken</h3>
-       <button id="btnyes2" onClick={this.clickyes}>Yes</button>
-       <button id="btnno32" onClick={this.clickno}>No</button>
-         </div>
+
+  </div>
+</ArcherContainer>
+
+</div>
+
        </div>
    }
-   {
-     this.state.isSectorManagerApprovalRequired=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>Sector Manger approval Taken</h3>
-       <button id="btnyes210" onClick={this.clickyes}>Yes</button>
-       <button id="btnno310" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
-   </div>
-   <div className="newdor">
-{
-     this.state.PR_MANAGER_APPROVAL=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>PR  Manger approval Taken</h3>
-       <button id="btnyes2100" onClick={this.clickyes}>Yes</button>
-       <button id="btnno3100" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
- </div>
+
+
+</div >
+
   
- <div className="newdor">
-{
-     this.state.FINANCE_MANAGER_APPROVAL=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>Finance  Manger approval Taken</h3>
-       <button id="btnyes21123" onClick={this.clickyes}>Yes</button>
-       <button id="btnno31123" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
- </div>
- <div className="newdor">
-{
-     this.state.IsProjectRelated=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>It is Related to Project</h3>
-       <button id="btnyes211515" onClick={this.clickyes}>Yes</button>
-       <button id="btnno311551" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
- </div>
-
-
-
- <div className="newdor">
-{
-     this.state.PMO_TEAM_REVIEW=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>PMO REVIEWED</h3>
-       <button id="btnyes215151" onClick={this.clickyes}>Yes</button>
-       <button id="btnno315151" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
- </div>
-
- <div className="newdor">
-{
-     this.state.TECHEVAL_DETAILS=="Yes" && 
-     <div>
-       <div className="divs">
-         <h3>TECHEVAL_DETAILS</h3>
-       <button id="btnyes2TECHEVAL_DETAILS" onClick={this.clickyes}>Yes</button>
-       <button id="TECHEVAL_DETAILS" onClick={this.clickno}>No</button>
-         </div>
-       </div>
-   }
- </div>
-  
-   <div className="newdor">
-{
-     this.state.WorkflowEnd=="Yes" && 
-     <div>
-       <div className="divend">
-         <h3>Worlflow Has been End</h3>
-         </div>
-       </div>
-   }
-
-
-
-
-   </div >
       </div >
     );
-  }
-
-  MethodNo1()
-  {
-// first check Is Planned or not
-  if(this.state.IsPlannedPurchase!="Yes"){
-  this.setIsPlannedPurchase();
-
-  }
-  
-// if Purchased is Planned.
-  if (this.state.IsPlannedPurchase=="Yes" && this.state.isDirectManagerApprovalRequired!="Yes")
-    this.setisDirectManagerApprovalRequired();
-
-    if (this.state.IsPlannedPurchase=="Yes" && this.state.isDeptManagerApprovalRequired!="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisisDeptManagerApprovalRequired();
-
-    if (this.state.IsPlannedPurchase=="Yes" && this.state.isSectorManagerApprovalRequired!="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisSectorManagerApprovalRequired();
-
-    // is planned
-    if (this.state.IsPlannedPurchase=="Yes" && this.state.isSectorManagerApprovalRequired=="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" 
-    && this.state.isDirectManagerApprovalRequired=="Yes" && this.state.FINANCE_MANAGER_APPROVAL!="Yes")
-    this.setFinanceManagerApproal();
-    
-    if  (this.state.IsPlannedPurchase=="Yes" && this.state.IsProjectRelated=="" && this.state.isSectorManagerApprovalRequired=="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" 
-    && this.state.isDirectManagerApprovalRequired=="Yes" && this.state.FINANCE_MANAGER_APPROVAL=="Yes")
-    this.setIsProjectRelated();
-
-    if (this.state.IsPlannedPurchase=="Yes" &&  this.state.IsProjectRelated=="Yes")
-    {
-     if (this.state.StepAnswer=="No"){
-        this.setisPR_MANAGER_APPROVAL();
-      }if (this.state.StepAnswer=="Yes" && this.state.PMO_TEAM_REVIEW!="Yes"){
-        this.setPMO_TEAM_REVIEW();
-      }
-      if (this.state.StepAnswer=="Yes" && this.state.PMO_TEAM_REVIEW=="Yes"){
-        this.setisPR_MANAGER_APPROVAL();
-      }
-      
-    }
-
-    //if Purchased is plan End
-
-    if  (this.state.IsPlannedPurchase=="No" && this.state.TECHEVAL_DETAILS!="Yes")
-    {
-this.setTECHEVAL_DETAILS();
-    }
-
-
-    if  (this.state.IsPlannedPurchase=="No" && this.state.TECHEVAL_DETAILS=="Yes"  && this.state.isDirectManagerApprovalRequired!="Yes")
-    {
-this.setisDirectManagerApprovalRequired();
-    }
-
-    if  (this.state.IsPlannedPurchase=="No" && this.state.TECHEVAL_DETAILS=="Yes"  
-    && this.state.isDirectManagerApprovalRequired=="Yes" && this.state.isDeptManagerApprovalRequired!="Yes"
-    )
-    {
-this.setisisDeptManagerApprovalRequired();
-    }
-
-    if  (this.state.IsPlannedPurchase=="No" && this.state.TECHEVAL_DETAILS=="Yes"  
-    && this.state.isDirectManagerApprovalRequired=="Yes" 
-    && this.state.isDeptManagerApprovalRequired=="Yes"
-    && this.state.isSectorManagerApprovalRequired!="Yes"
-    )
-    {
-this.setisSectorManagerApprovalRequired();
-    }
-
-
-  }
-
-  MethodNo2()
-  {
-
-  }
-
-  MethodNo3()
-  {
-
-  }
-
-  MethodNo4()
-  {
-
-  }
-
-  MethodNo5()
-  {
-
-  }
-
-  MethodNo6()
-  {
-    if (this.state.setisDirectManagerApprovalRequired!="Yes")
-    this.setisDirectManagerApprovalRequired();
-
-    if (this.state.isDeptManagerApprovalRequired!="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisisDeptManagerApprovalRequired();
-
-    if (this.state.isSectorManagerApprovalRequired!="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisSectorManagerApprovalRequired();
-
-    if (this.state.PR_MANAGER_APPROVAL!="Yes" && 
-    this.state.isSectorManagerApprovalRequired=="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisPR_MANAGER_APPROVAL();
-
-    if (this.state.PR_MANAGER_APPROVAL=="Yes" && 
-    this.state.isSectorManagerApprovalRequired=="Yes" && this.state.isDeptManagerApprovalRequired=="Yes" && this.state.isDirectManagerApprovalRequired=="Yes")
-    this.setisWorkflowEnd();
-
-/*
- this.setState({
-       isDirectManagerApprovalRequired: "Yes",
-       isDeptManagerApprovalRequired: "Yes",
-       isSectorManagerApprovalRequired: "Yes",
-       PR_MANAGER_APPROVAL: "Yes",
-       WorkflowEnd: "Yes",
-     });
-
-*/
   }
 }
 

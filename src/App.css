@@ -1,9 +1,29 @@
+
 .App {
   text-align: center;
 }
+
+.divsworkfow{
+  width: 190px;
+    /* height: 90px; */
+    /* position: absolute; */
+    display: block;
+    padding: 11px;
+    /* height: 222px; */
+    /* width: 222px; */
+    /* position: fixed; */
+    border: solid 1px lightblue;
+    margin: 3px;
+    float: left;
+    font-size: 9px;
+    text-align: center;
+
+}
+
 .newdor{
   width: 100%;
   float: left;
+  margin-bottom: 11px;
 }
 .divsfloatnone{
   border: solid 2px #282c34;
@@ -26,6 +46,12 @@
     padding: 11px;
     margin: 3px;
     float: left;
+}
+
+.arrowsdiv{
+  width: 130px;
+  padding:11px;
+  margin: 3px;
 }
 .divs{
   border: solid 2px #282c34;
