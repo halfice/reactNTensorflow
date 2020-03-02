@@ -6,6 +6,11 @@ import * as tfvis from '@tensorflow/tfjs-vis';
 import * as Papa from "papaparse";
 import { resolve } from 'dns';
 import { combineLocations } from '@tensorflow/tfjs-core/dist/ops/axis_util';
+
+// data from:
+// https://www.kaggle.com/uciml/pima-indians-diabetes-database/kernels
+// https://datahub.io/machine-learning/diabetes#resource-diabetes_arff
+
 window.tf = tf;
 window.tfvis = tfvis;
 class Diabitic extends React.Component {
@@ -32,7 +37,7 @@ class Diabitic extends React.Component {
         //stat mapping
         const values = listen.map(d => ({
           x: d.Glucose,
-          y: d.Age,
+          y: d.Outcome          ,
         }));
         //end mapping
         //scatter plot start
@@ -41,14 +46,17 @@ class Diabitic extends React.Component {
           { values },
           {
             xLabel: 'Glucose',
-            yLabel: 'Age',
+            yLabel: 'Sugar',
             height: 300
           }
         );
         //scatter plot end
       }//function end
       // rest of config ...
-    })
+    });
+
+
+    
   }
 
 
@@ -127,8 +135,54 @@ class Diabitic extends React.Component {
     return model;
   };
 
+  showLineGraph()
+  {
+    var csvUr = `https://raw.githubusercontent.com/curiousily/Logistic-Regression-with-TensorFlow-js/master/src/data/diabetes.csv`;
+    Papa.parse(csvUr, {
+      download: true,
+      header: true,
+      complete: function (results) {
+        var listen = results.data;
+       // console.log(listen);
+        //stat mapping
+        const series1 = listen.map(d => ({
+          x: d.BloodPressure,
+          y: d.Glucose          ,
+        }));
+
+
+        const series = listen.map(d => ({
+          x: d.BloodPressure,
+          y: d.Outcome          ,
+        }));
+        
+       const data = { values: [series1,series] }
+       console.log(data);
+        //end mapping
+        //scatter plot start
+        const surface = { name: 'Glucose VS Diabietic', tab: 'Charts' };
+        tfvis.render.linechart(surface, data, { zoomToFit: false }
+        );
+        //scatter plot end
+
+
+
+
+        
+      }//function end
+      // rest of config ...
+    });
+  // Render to visor
+ 
+  }
+
   async componentDidMount() {
-    this.PreparePlotScater();
+   // this.PreparePlotScater();
+   this.showLineGraph();
+
+
+
+
     //preparing data start
     const data = await this.prepareData();
     this.renderOutcomes(data);
@@ -214,8 +268,6 @@ class Diabitic extends React.Component {
       <div>
         <h1>BIS MILLAH HIR REHMAN NIR RAHEEEM</h1>
         <div>
-          43
-
         </div>
 
         <div id="outcome-cont" />
