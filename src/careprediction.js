@@ -82,7 +82,8 @@ class careprediction extends React.Component {
     //add out put layer
     model.add(tf.layers.dense({ units: 1, useBias: true }));
     //The code above creates our output layer. We set units to 1 because we want to output 1 number.
-    return model;
+      return model;
+
 
   }
 
@@ -97,7 +98,8 @@ class careprediction extends React.Component {
       const inputs = data.map(d => d.horsepower);
       const labels = data.map(d => d.mpg);
 
-      //We then convert each array data to a 2d tensor. The tensor will have a shape of [num_examples, num_features_per_example]. 
+        //We then convert each array data to a 2d tensor. 
+        //The tensor will have a shape of[num_examples, num_features_per_example]. 
       //Here we have inputs.length examples and each example has 1 input feature (the horsepower).
       // input.len is num of examples
       // 1 is showing that number of feature in each example
@@ -136,6 +138,7 @@ class careprediction extends React.Component {
 
     //mean squared error. it takes the distance of y from x.  square it and take mean of all 
     // greater the the MSE OR mean squared error weak the mdoel
+      //Mean square error (MSE) is the average squared loss per example over the whole dataset. 
     model.compile({
       optimizer: tf.train.adam(),
       loss: tf.losses.meanSquaredError,
@@ -167,6 +170,7 @@ class careprediction extends React.Component {
     const [xs, preds] = tf.tidy(() => {
 
       //We generate 100 new ‘examples' to feed to the model. 
+        //tf.linespace  =>Generates values in an interval.
       const xs = tf.linspace(0, 1, 100);
       // Model.predict is how we feed those examples into the model. Note that they need to be have a 
       //  similar shape          ([num_examples, num_features_per_example]) as when we did training.

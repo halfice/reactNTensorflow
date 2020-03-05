@@ -88,9 +88,8 @@ class carcylinderpredicion extends React.Component {
       loss:tf.losses.meanSquaredError,
       metrics:['mse']
     });
-
     const batchSize=10;
-    const epochs=100;
+      const epochs = 100;
 
     return await model.fit(inputs,labels,{
       batchSize,
