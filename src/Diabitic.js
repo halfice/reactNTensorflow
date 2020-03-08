@@ -143,21 +143,14 @@ class Diabitic extends React.Component {
       header: true,
       complete: function (results) {
         var listen = results.data;
-       // console.log(listen);
-        //stat mapping
-        const series1 = listen.map(d => ({
-          x: d.BloodPressure,
-          y: d.Glucose          ,
-        }));
-
 
         const series = listen.map(d => ({
           x: d.BloodPressure,
           y: d.Outcome          ,
         }));
         
-       const data = { values: [series1,series] }
-       console.log(data);
+      // const data = { values: [series1,series] }
+      const data = { values: [series] }
         //end mapping
         //scatter plot start
         const surface = { name: 'Glucose VS Diabietic', tab: 'Charts' };
@@ -189,12 +182,12 @@ class Diabitic extends React.Component {
     //console.log(this.state.OutComes);
     // const features = ["Glucose"];
     const features = ["Glucose", "Age", "Insulin", "BloodPressure"]
-    const [trainDs, validDs, xTest, yTest] = this.createDataSets(data.data, features, 0.1, 16);
-    const model = await this.trainLogisticRegression(
-      features.length,
-      trainDs,
-      validDs
-    );
+    //const [trainDs, validDs, xTest, yTest] = this.createDataSets(data.data, features, 0.1, 16);
+    //const model = await this.trainLogisticRegression(
+     // features.length,
+      //trainDs,
+     // validDs
+    //);
 
     // const features = ["Glucose", "Age", "Insulin", "BloodPressure"];
 
@@ -207,35 +200,24 @@ class Diabitic extends React.Component {
 
     // const model = await trainComplexModel(features.length, trainDs, validDs);
 
-    const preds = model.predict(xTest).argMax(-1);
-    const labels = yTest.argMax(-1);
+    //const preds = model.predict(xTest).argMax(-1);
+   // const labels = yTest.argMax(-1);
 
-    const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
-    const container = document.getElementById("confusion-matrix");
+   // const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+   // const container = document.getElementById("confusion-matrix");
 
-    tfvis.render.confusionMatrix(container, {
-      values: confusionMatrix,
-      tickLabels: ["Healthy", "Diabetic"]
-    });
-    var trainData = {
-      Glucose: [148],
-      Age: [50],
-          Insulin: [0],
-            BloodPressure: [75]
+    //tfvis.render.confusionMatrix(container, {
+      //values: confusionMatrix,
+     // tickLabels: ["Healthy", "Diabetic"]
+   // });
+   // var trainData = {
+    //  Glucose: [148],
+    //  Age: [50],
+          //Insulin: [0],
+            //BloodPressure: [75]
 
-    } 
-    // OR
+   // } 
 
-    var X = "148,50,0,75";
-    var y="1";
-
-      var trainTensors={
-        x:tf.tensor2d([148,50,0,75],[1,4])
-    }
-
-        model.predict(trainTensors.x).print();
-
-    
 
   }
  
