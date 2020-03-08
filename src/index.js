@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import Performance  from './performance';
-
+import Calefornia  from './calefornia';
 //ReactDOM.render(<App />, document.getElementById('root'));
 //ReactDOM.render(<TFAPP />, document.getElementById('root'));
 //ReactDOM.render(<SimpleLRTF />, document.getElementById('root'));
-ReactDOM.render(<Performance />, document.getElementById('root'));
+ReactDOM.render(<Calefornia />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
