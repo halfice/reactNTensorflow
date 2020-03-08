@@ -18,29 +18,9 @@ class calefornia extends React.Component {
 
     async getData()
     {
-        var californiadatareq=await fetch('https://raw.githubusercontent.com/halfice/reactNTensorflow/master/california_housing_train.csv');
-        const csvUrl1="https://raw.githubusercontent.com/halfice/reactNTensorflow/master/california_housing_train.csv";
-        
-        const csvDataset = tf.data.csv(
-            csvUrl1, {
-            columnConfigs: {
-                median_house_value: {
-                isLabel: true
-              }
-            }
-          });
-          const numOfFeatures = (await csvDataset.columnNames()).length - 1;
-          const flattenedDataset =
-          csvDataset
-            .map(({ xs, ys }) => {
-              // Convert xs(features) and ys(labels) from object form (keyed by column
-              // name) to array form.
-              return { xs: Object.values(xs), ys: Object.values(ys) };
-            })
-            .batch(10);
-        console.log(flattenedDataset);
-
-
+        var californiadatareq=await fetch('https://raw.githubusercontent.com/halfice/reactNTensorflow/master/california_housing_train.json');
+        var calirforniadata=await californiadatareq.json();
+        console.log(californiadatareq);
     }
 
 
